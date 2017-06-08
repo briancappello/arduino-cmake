@@ -695,7 +695,7 @@ function(REGISTER_HARDWARE_PLATFORM PLATFORM_PATH)
             endif()
 
             if(${PLATFORM}_PROGRAMMERS_PATH)
-                load_arduino_style_settings(${PLATFORM}_PROGRAMMERS "${ARDUINO_PROGRAMMERS_PATH}")
+                load_arduino_style_settings(${PLATFORM}_PROGRAMMERS "${${PLATFORM}_PROGRAMMERS_PATH}")
             endif()
 
             if(${PLATFORM}_VARIANTS_PATH)
