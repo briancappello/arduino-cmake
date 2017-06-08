@@ -10,7 +10,7 @@
 # and this line should go before call to "cmake/ArduinoToolchain.cmake"
 # this is durty hack and should be fixed somewhen, because it should go to 
 # particular cmake subdirectory
-set(ARDUINO_CPU 16MHzatmega328)
+set(ARDUINO_CPU atmega328)
 
 set(CMAKE_TOOLCHAIN_FILE cmake/ArduinoToolchain.cmake) # Arduino Toolchain
 set(CMAKE_CXX_STANDARD 14)
