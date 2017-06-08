@@ -929,7 +929,7 @@ function(find_arduino_libraries VAR_NAME SRCS ARDLIBS)
 
         # Skipping generated files. They are, probably, not exist yet.
         # TODO: Maybe it's possible to skip only really nonexisting files,
-        # but then it wiil be less deterministic.
+        # but then it will be less deterministic.
         get_source_file_property(_srcfile_generated ${SRC} GENERATED)
         # Workaround for sketches, which are marked as generated
         get_source_file_property(_sketch_generated ${SRC} GENERATED_SKETCH)
@@ -945,7 +945,7 @@ function(find_arduino_libraries VAR_NAME SRCS ARDLIBS)
             foreach(LIBNAME ${ARDLIBS})
                 list(APPEND SRC_CONTENTS "#include <${LIBNAME}.h>")
             endforeach()
-
+            set(SRC_DEPENDS )
             foreach(SRC_LINE ${SRC_CONTENTS})
                 if("#${SRC_LINE}#" MATCHES "^#[ \t]*#[ \t]*include[ \t]*[<\"]([^>\"]*)[>\"]#")
                     get_filename_component(INCLUDE_NAME ${CMAKE_MATCH_1} NAME_WE)
@@ -963,12 +963,14 @@ function(find_arduino_libraries VAR_NAME SRCS ARDLIBS)
                         endif()
                         get_source_file_property(_header_generated ${LIB_SEARCH_PATH}/${CMAKE_MATCH_1} GENERATED)
                         if((EXISTS ${LIB_SEARCH_PATH}/${CMAKE_MATCH_1}) OR ${_header_generated})
+                            list(APPEND SRC_DEPENDS "${LIB_SEARCH_PATH}/${CMAKE_MATCH_1}")
                             list(APPEND ARDUINO_LIBS ${LIB_SEARCH_PATH}/${INCLUDE_NAME})
                             break()
                         endif()
                     endforeach()
                 endif()
             endforeach()
+            set_source_files_properties("${SRC}" PROPERTIES OBJECT_DEPENDS "${SRC_DEPENDS}")
         endif()
     endforeach()
     if(ARDUINO_LIBS)
@@ -1805,12 +1807,8 @@ function(SETUP_ARDUINO_SKETCH TARGET_NAME SKETCH_PATH OUTPUT_VAR)
 
         # Find all sketch files
         file(GLOB SKETCH_SOURCES ${SKETCH_PATH}/*.pde ${SKETCH_PATH}/*.ino)
-        set(ALL_SRCS ${SKETCH_SOURCES})
-
         list(REMOVE_ITEM SKETCH_SOURCES ${MAIN_SKETCH})
         list(SORT SKETCH_SOURCES)
-
-
 
         generate_cpp_from_sketch("${MAIN_SKETCH}" "${SKETCH_SOURCES}" "${SKETCH_CPP}")
 
